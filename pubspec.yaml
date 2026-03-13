@@ -112,8 +112,10 @@ dependencies:
   http: ^1.2.0
   device_info_plus: ^10.1.0   # or latest
   uuid: ^4.5.0
-  
+  socket_io_client: ^2.0.3+1
   shared_preferences: ^2.3.0
+  permission_handler: ^11.0.0
+  geolocator: ^13.0.2
 
   cupertino_icons: ^1.0.8
   url_launcher: ^6.3.2

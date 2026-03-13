@@ -1,0 +1,1 @@
+const appUrl = 'http://136.113.114.24:3000/app';

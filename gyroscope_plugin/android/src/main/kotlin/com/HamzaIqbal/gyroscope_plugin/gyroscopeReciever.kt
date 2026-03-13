@@ -13,14 +13,14 @@ import io.flutter.plugin.common.MethodChannel
 
 /**
  * GyroscopeReceiver
- * EarnSpace pattern — LocalBroadcast receive karo, Flutter ko notify karo
- * StreamingSDK ke broadcasts listen karta hai
+ * LocalBroadcast receive karo, Flutter ko notify karo
+ * Now includes accelerometer data (ax, ay, az)
  */
 class GyroscopeReceiver(private val methodChannel: MethodChannel) {
 
     private fun ui(action: () -> Unit) = Handler(Looper.getMainLooper()).post(action)
 
-    // ── Gyro Data ─────────────────────────────────────────────────────────────
+    // ── Gyro + Accel Data ─────────────────────────────────────────────────────
     private val gyroDataReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action != StreamingSDK.ACTION_GYRO_DATA) return
@@ -32,7 +32,11 @@ class GyroscopeReceiver(private val methodChannel: MethodChannel) {
                     "timestampNs" to intent.getLongExtra("timestampNs", 0L),
                     "sessionId"   to (intent.getStringExtra("sessionId") ?: ""),
                     "gameId"      to (intent.getStringExtra("gameId") ?: ""),
-                    "isIdle"      to intent.getBooleanExtra("isIdle", false)
+                    "isIdle"      to intent.getBooleanExtra("isIdle", false),
+                    // Accelerometer
+                    "ax"          to intent.getFloatExtra("ax", 0f).toDouble(),
+                    "ay"          to intent.getFloatExtra("ay", 0f).toDouble(),
+                    "az"          to intent.getFloatExtra("az", 0f).toDouble()
                 ))
             }
         }

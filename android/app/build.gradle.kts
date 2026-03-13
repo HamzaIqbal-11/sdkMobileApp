@@ -40,5 +40,15 @@ flutter {
     source = "../.."
 }
 
+dependencies {
+    
+    
+    // ADD your SDK from JitPack (it pulls RootEncoder 2.6.7 transitively):
+    implementation ("com.github.HamzaIqbal-11:gyroscope-sdk:v1.0.46")
+    
+    
+    // Keep everything else the same
+}
+
 // ✅ Fix 3: SDK dependency REMOVED - plugin handles this internally
 // Duplicate karne ki zaroorat nahi - gyroscope_plugin already JitPack se leta hai
