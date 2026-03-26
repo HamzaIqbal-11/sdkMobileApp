@@ -1,4 +1,4 @@
-package com.example.gyroscope
+package com.santriqx.test
 
 import io.flutter.embedding.android.FlutterActivity
 

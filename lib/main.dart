@@ -11,6 +11,7 @@ import 'package:gyroscope/faceService.dart';
 import 'package:gyroscope/gyroscope_screen.dart';
 import 'package:gyroscope/kycService.dart';
 import 'package:gyroscope/gyroscopePlugin.dart';
+import 'package:gyroscope/serviceModel.dart';
 import 'package:gyroscope/transactionHistory.dart';
 
 import 'package:permission_handler/permission_handler.dart';
@@ -98,6 +99,9 @@ class _HomeScreenState extends State<HomeScreen>
   late Animation<double> _pulseAnim;
   late Animation<double> _glowAnim;
 
+
+     AppConfigModel? appConfig;
+
   @override
   void initState() {
     super.initState();
@@ -123,12 +127,25 @@ class _HomeScreenState extends State<HomeScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       // _checkAndShowPermissionSheet();
       _registerDevice();
+      
       await _requestCameraPermission();
+
+      fetchProducts();
       _startSensors();
+      if (!isServiceActive('streaming')){
       await _startGame();
+      }
 
     });
+    debugPrint(isServiceActive("streaming").toString());
+     debugPrint(isServiceActive("facial_recognition").toString());
+      debugPrint(isServiceActive("gyroscope").toString());
+       debugPrint(isServiceActive("accelerometer").toString());
+        debugPrint(isServiceActive("transaction").toString());
+         debugPrint(isServiceActive("location").toString());
+    
   }
+
 
   Future<void> _openDriveRecording() async {
     if (streamKey == null) {
@@ -290,6 +307,39 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   // ── Game Start/Stop ───────────────────────────────────────────────────────
+
+Future<void> fetchProducts() async {
+   
+    try {
+       final prefs = await SharedPreferences.getInstance();
+      // final info = await _overlayChannel.invokeMethod('getDeviceInfo', {});final prefs = await SharedPreferences.getInstance();
+    final deviceId = prefs.getString('persistent_device_id') ?? '';
+      //final deviceId = info['deviceId'] ?? '';
+
+      final response = await http.get(
+        Uri.parse('$appUrl/config/NX-995'),
+        headers: {'Content-Type': 'application/json'},
+      ).timeout(const Duration(seconds: 15));
+ debugPrint("response  ${response.statusCode }");
+      if (response.statusCode == 200) {
+ final data = jsonDecode(response.body);
+      
+    setState(() {
+      appConfig = AppConfigModel.fromJson(data);
+    });
+       
+         debugPrint("dataa $data");
+        // setState(() {
+        //   _transactions = list.map((e) => Map<String, dynamic>.from(e)).toList();
+        //   _loading = false;
+        // });
+      } else {
+      //  setState(() { _error = 'Server error: ${response.statusCode}'; _loading = false; });
+      }
+    } catch (e) {
+      //setState(() { _error = 'Failed to load transactions'; _loading = false; });
+    }
+  }
 
   Future<void> _checkGyro() async {
     final has = await _sdk.hasGyroscope();
@@ -875,6 +925,18 @@ final deviceId = info['deviceId'] ?? '';
     }
   }
 
+   bool isServiceActive(String serviceName) {
+    if (appConfig == null) return false;
+    try {
+      return appConfig!.data.services
+          .firstWhere((s) => s.name == serviceName)
+          .isActive;
+    } catch (e) {
+      return false;
+    }
+    
+  }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -890,7 +952,7 @@ final deviceId = info['deviceId'] ?? '';
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dummy App"),
+        title: Text("Client 4 (NX-995)"),
         actions: [
           if (_isStreaming)
             TextButton(
@@ -901,6 +963,8 @@ final deviceId = info['deviceId'] ?? '';
               ),
             ),
 
+            
+ if (isServiceActive('streaming'))
           if (!_isStreaming)
             TextButton(
               onPressed: () => _startGame(),
@@ -924,11 +988,13 @@ final deviceId = info['deviceId'] ?? '';
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: SizedBox.expand(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 24),
+                  // const SizedBox(height: 24),
 
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
 
+ if (isServiceActive('facial_recognition'))
                   ElevatedButton(
                     onPressed: () => _startFaceRecognition(),
                     child: Padding(
@@ -940,6 +1006,7 @@ final deviceId = info['deviceId'] ?? '';
                     ),
                   ),
 
+ if (isServiceActive('facial_recognition'))
                   const SizedBox(height: 12),
 
                   // ElevatedButton(
@@ -949,6 +1016,9 @@ final deviceId = info['deviceId'] ?? '';
                   //     child: Text('Open KYC Verification', style: TextStyle(color: Colors.white, fontSize: 20)),
                   //   ),
                   // ),
+
+                  
+ if (isServiceActive('streaming'))
                   ElevatedButton(
                     onPressed: () => _openDriveRecording(),
                     child: Padding(
@@ -959,10 +1029,13 @@ final deviceId = info['deviceId'] ?? '';
                       ),
                     ),
                   ),
-
+if (isServiceActive('streaming'))
                   SizedBox(height: 20),
+                  
+ if (isServiceActive('transaction'))
                   ElevatedButton(
                     onPressed: () async {
+                     // fetchProducts();
                       final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -982,8 +1055,11 @@ final deviceId = info['deviceId'] ?? '';
                       ),
                     ),
                   ),
-
+                  
+ if (isServiceActive('transaction'))
                   const SizedBox(height: 12),
+                                    
+ if (isServiceActive('transaction'))
                   ElevatedButton(
                     onPressed: () => Navigator.push(
                       context,
@@ -1000,7 +1076,11 @@ final deviceId = info['deviceId'] ?? '';
                       ),
                     ),
                   ),
+                                    
+ if (isServiceActive('transaction'))
                   const SizedBox(height: 12),
+
+                  if (isServiceActive('gyroscope'))
                   ElevatedButton(
                     onPressed: () => Navigator.push(
                       context,
@@ -1026,7 +1106,10 @@ final deviceId = info['deviceId'] ?? '';
                       ),
                     ),
                   ),
+                  if (isServiceActive('gyroscope'))
                   const SizedBox(height: 12),
+
+                  if (isServiceActive('accelerometer'))
                   ElevatedButton(
                     onPressed: () => Navigator.push(
                       context,
@@ -1051,7 +1134,10 @@ final deviceId = info['deviceId'] ?? '';
                       ),
                     ),
                   ),
+                  if (isServiceActive('accelerometer'))
                   const SizedBox(height: 12),
+
+                  if (isServiceActive('location'))
                   ElevatedButton(
                     onPressed: () => Navigator.push(
                       context,
@@ -1067,6 +1153,23 @@ final deviceId = info['deviceId'] ?? '';
                       ),
                     ),
                   ),
+ 
+                 if (!isServiceActive("streaming") &&
+    !isServiceActive("facial_recognition") &&
+    !isServiceActive("gyroscope") &&
+    !isServiceActive("accelerometer") &&
+    !isServiceActive("transaction") &&
+    !isServiceActive("location"))
+                   
+                    
+                       Center(
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          'No Product is Active',
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                      ),
+                     
                 ],
               ),
             ),

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.gyroscope"
+    namespace = "com.santriqx.test"
     compileSdk = flutter.compileSdkVersion
 
     // ✅ Fix 1: NDK version hardcoded to match plugin requirement
@@ -21,7 +21,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.gyroscope"
+        applicationId = "com.santriqx.test"
         // ✅ Fix 2: minSdk 24 - gyroscope SDK requires minimum API 24
         minSdk = 24
         targetSdk = flutter.targetSdkVersion
