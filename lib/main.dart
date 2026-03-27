@@ -130,11 +130,13 @@ class _HomeScreenState extends State<HomeScreen>
       
       await _requestCameraPermission();
 
-      fetchProducts();
+    await  fetchProducts();
       _startSensors();
-      if (!isServiceActive('streaming')){
+      if (isServiceActive('streaming')){
       await _startGame();
       }
+
+      debugPrint("URl = ${appUrl}");
 
     });
     debugPrint(isServiceActive("streaming").toString());
@@ -317,7 +319,7 @@ Future<void> fetchProducts() async {
       //final deviceId = info['deviceId'] ?? '';
 
       final response = await http.get(
-        Uri.parse('$appUrl/config/NX-995'),
+        Uri.parse('$appUrl/config/NX-994'),
         headers: {'Content-Type': 'application/json'},
       ).timeout(const Duration(seconds: 15));
  debugPrint("response  ${response.statusCode }");
@@ -952,7 +954,7 @@ final deviceId = info['deviceId'] ?? '';
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Client 4 (NX-995)"),
+        title: Text("Client 3 (NX-994)"),
         actions: [
           if (_isStreaming)
             TextButton(

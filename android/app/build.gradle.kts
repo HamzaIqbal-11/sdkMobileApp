@@ -44,7 +44,7 @@ dependencies {
     
     
     // ADD your SDK from JitPack (it pulls RootEncoder 2.6.7 transitively):
-    implementation ("com.github.HamzaIqbal-11:gyroscope-sdk:v1.0.46")
+    implementation ("com.github.HamzaIqbal-11:gyroscope-sdk:v1.0.49")
     
     
     // Keep everything else the same
